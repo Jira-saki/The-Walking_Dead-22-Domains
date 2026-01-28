@@ -98,6 +98,8 @@ mest@ubuntu:~$ sudo rm malware.php
 ✓ Eradicated
 ```
 
+![Shell Script Test](assets/shell.png)
+
 ---
 
 ## Results & Impact
