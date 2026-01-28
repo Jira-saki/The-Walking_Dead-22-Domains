@@ -76,9 +76,61 @@ grep -rE "eval\(|base64_decode\(" /path/to/sites --include="*.php"
 
 ---
 
-## Lab Validation (Reproducible Proof)
+## Lab Validation: From Kernel-Level Locks to Orchestrated Isolation
 
-To validate the removal strategy, the "Immutable Deadlock" was reproduced in a controlled Ubuntu (OrbStack) environment:
+To validate the "Zombie" containment strategy at scale, I reproduced the threat within a modern Kubernetes (K3s) environment. This lab demonstrates the transition from manual remediation to Declarative Infrastructure Security.
+
+### A. Environment Architecture
+- **Virtualization:** OrbStack (Linux VM on macOS)
+- **Orchestration:** K3s (Lightweight Kubernetes)
+- **Network Control:** Embedded K3s Network Policy Controller
+
+### B. The "Living off the Land" (LotL) Attack Simulation
+I simulated a Lateral Movement scenario where an infected container (BusyBox) attempts to establish a Command & Control (C2) link to the host:
+- **Exploitation:** Leveraged pre-installed binaries (nc, sh) to create a Reverse Shell via a named pipe
+- **C2 Establishment:** Successfully bypassed standard container isolation to gain shell access on the attacker's machine
+- **Persistence Simulation:** Leveraged Kubernetes pod lifecycle to simulate a "self-healing" malware that persists through standard process termination
+
+### C. Forensic Investigation (Node-Level Analysis)
+Using my background in Linux internals, I performed a Cross-Namespace Investigation to bridge the gap between the Container and the Host:
+- **PID Discovery:** Identified the "malicious" process on the Ubuntu Node using `ps aux | grep nc`
+- **Namespace Peering:** Used `nsenter` to audit the pod's network stack directly from the Host OS, confirming the active unauthorized connection
+
+### D. Remediation: Containment via Code
+Instead of the destructive "Delete & Restart" approach (which loses forensic evidence), I implemented a Zero-Trust NetworkPolicy:
+
+```yaml
+# isolate-zombie.yaml (Egress Isolation)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: isolate-zombie
+spec:
+  podSelector:
+    matchLabels:
+      run: walking-dead-pod
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - namespaceSelector: {}  # Allow internal DNS only
+    ports:
+    - protocol: UDP
+      port: 53
+```
+
+**Result:** Upon applying the policy via kubectl, the C2 session frozen instantly while the pod remained active for further investigation—proving the efficacy of Layer 4 Isolation.
+
+![Local Lab Test](assets/local-lab.png)
+
+### Updated Technology Stack (Infrastructure Domain)
+
+| Category | Tools |
+|----------|-------|
+| **Orchestration** | K3s (Kubernetes), kubectl |
+| **Virtualization** | OrbStack, Ubuntu Jammy |
+| **Networking** | NetworkPolicy (L4 Firewall), Netcat |
+| **Forensics** | nsenter, ss, ps, /proc filesystem |
 
 ```bash
 # 1. Create malicious payload
@@ -104,7 +156,6 @@ mest@ubuntu:~$ sudo rm malware.php
 ![Shell Script Test](assets/shell.png)
 
 ---
-
 ## Results & Impact
 
 | **Metric** | **Result** |
@@ -165,6 +216,14 @@ To prevent a "re-animation" of the infection and protect against future outbreak
 - **[docs/malware-analysis.md](docs/malware-analysis.md)** — Extensible analysis framework for post-incident reports
 - **[.github/copilot-instructions.md](.github/copilot-instructions.md)** — AI agent guidelines for codebase maintenance
 
+---
+
+## 🚀 Coming Soon: Phase 3 - Automated Cloud Deployment with Terraform
+
+*Next evolution: Scaling the "Zombie" containment strategy to AWS cloud infrastructure using Infrastructure as Code (IaC) principles.*
+
+---
+
 ## 🚀 How to use the Scanner
 
 The included `malware-scanner.sh` is a tool I developed to automate the detection of the "Zombie" attributes across all 22 domains.
@@ -177,6 +236,11 @@ The included `malware-scanner.sh` is a tool I developed to automate the detectio
 ## 🤝 Acknowledgments
 
 This incident response and remediation project was executed independently, with strategic analysis and technical support provided by **AI assistants**:
+- **Google Gemini** — Security analysis, threat modeling insights, and hardening recommendations
+- **ChatGPT** — Technical documentation support and code refinement
+- **GitHub Copilot** — Code development assistance and automation scripting
+
+All operational decisions, incident response strategy, and eradication procedures were independently directed and verified by myself. AI assistants provided research acceleration and analytical support throughout the process.nd remediation project was executed independently, with strategic analysis and technical support provided by **AI assistants**:
 - **Google Gemini** — Security analysis, threat modeling insights, and hardening recommendations
 - **ChatGPT** — Technical documentation support and code refinement
 - **GitHub Copilot** — Code development assistance and automation scripting
