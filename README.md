@@ -43,6 +43,9 @@ Self-healing PHP scripts monitored critical files (`index.php`, `.htaccess`). On
 ---
 
 ## Remediation Strategy
+
+The critical challenge was the race condition between the human administrator and the automated Guardian script. My strategy prioritized Neutralization (chmod 0000) before Eradication (rm) to ensure the malware could not trigger a re-infection loop during the cleanup process.
+
 ### Phase 1: Neutralization (Permission Stripping)
 Since direct deletion was blocked, I implemented a **"Freeze Strategy"**—removing all execution permissions:
 ```bash
@@ -114,6 +117,32 @@ mest@ubuntu:~$ sudo rm malware.php
 
 ---
 
+## 🛡️ Prevention & Strategic Hardening
+
+To prevent a "re-animation" of the infection and protect against future outbreaks, the following security baseline has been established:
+
+### 1. Entry Point Defense (Vulnerability Management)
+- **Remove Legacy Libraries:** Delete all unused or outdated libraries like PHPExcel and KCFinder, which served as the primary entry points for the initial exploit.
+- **Patch Management:** Ensure WordPress core, plugins, and themes are updated to the latest versions to close known security gaps.
+- **Secure Coding:** Audit custom PHP scripts (like design_toiawase.php) to fix Path Traversal and Header Injection vulnerabilities.
+
+### 2. Lateral Movement Prevention
+- **Environment Isolation:** Transition from a shared permission model to isolated accounts (e.g., CloudLinux LVE) to ensure that a compromise in one domain cannot jump to another.
+- **Credential Hygiene:** Rotate all SSH/FTP and Database passwords immediately following an incident to invalidate any leaked credentials.
+- **Salts & Keys Rotation:** Update WordPress Security Salts to force-logout all users, ensuring any hijacked sessions are terminated.
+
+### 3. System-Level Hardening
+- **Disable In-Browser Editing:** Set `define('DISALLOW_FILE_EDIT', true);` in wp-config.php to prevent attackers from using the WordPress Dashboard as a Web Shell.
+- **Execution Blocking:** Implement .htaccess rules to block PHP execution in directories that should only host static assets (e.g., /uploads/ or /css/).
+- **Disable Risky Functions:** Configure php.ini to disable dangerous functions like shell_exec, system, and passthru to limit the impact of a Web Shell.
+
+### 4. Continuous Monitoring & Auditing
+- **Integrity Monitoring:** Utilize tools like Wordfence Central to monitor file changes and receive real-time alerts on suspicious activity.
+- **Automated Audits:** Periodically run the malware-scanner.sh script developed during this incident to check for unexpected immutable bits or suspicious PHP patterns.
+- **Log Review:** Regularly check debug.log and server access logs for unauthorized access patterns or "Pattern Zero" indicators.
+
+---
+
 ## Technical Artifacts & Tools
 
 ### Custom Automation
@@ -140,7 +169,16 @@ mest@ubuntu:~$ sudo rm malware.php
 
 The included `malware-scanner.sh` is a tool I developed to automate the detection of the "Zombie" attributes across all 22 domains.
 
-**Usage:**
-
 1. Give execution permission: `chmod +x malware_scanner.sh`
 2. Run against a directory: `./malware_scanner.sh /var/www/html`
+
+---
+
+## 🤝 Acknowledgments
+
+This incident response and remediation project was executed independently, with strategic analysis and technical support provided by **AI assistants**:
+- **Google Gemini** — Security analysis, threat modeling insights, and hardening recommendations
+- **ChatGPT** — Technical documentation support and code refinement
+- **GitHub Copilot** — Code development assistance and automation scripting
+
+All operational decisions, incident response strategy, and eradication procedures were independently directed and verified by myself. AI assistants provided research acceleration and analytical support throughout the process.
