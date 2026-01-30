@@ -235,14 +235,12 @@ The included `malware-scanner.sh` is a tool I developed to automate the detectio
 
 ## 🤝 Acknowledgments
 
-This incident response and remediation project was executed independently, with strategic analysis and technical support provided by **AI assistants**:
-- **Google Gemini** — Security analysis, threat modeling insights, and hardening recommendations
-- **ChatGPT** — Technical documentation support and code refinement
-- **GitHub Copilot** — Code development assistance and automation scripting
+This incident response and remediation project was executed independently.
 
-All operational decisions, incident response strategy, and eradication procedures were independently directed and verified by myself. AI assistants provided research acceleration and analytical support throughout the process.nd remediation project was executed independently, with strategic analysis and technical support provided by **AI assistants**:
-- **Google Gemini** — Security analysis, threat modeling insights, and hardening recommendations
-- **ChatGPT** — Technical documentation support and code refinement
-- **GitHub Copilot** — Code development assistance and automation scripting
+AI assistants were used as supporting tools for research acceleration, documentation, and code refinement:
 
-All operational decisions, incident response strategy, and eradication procedures were independently directed and verified by myself. AI assistants provided research acceleration and analytical support throughout the process.
+- Google Gemini — Security analysis and threat modeling insights  
+- ChatGPT — Technical documentation support  
+- GitHub Copilot — Code development assistance
+
+All operational decisions, incident response strategies, validation, and eradication procedures were independently designed, executed, and verified by myself.
