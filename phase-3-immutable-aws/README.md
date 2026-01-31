@@ -55,16 +55,17 @@ Client → Internet → EC2 (ASG) → Nginx
 ### Future Architecture Vision
 ```mermaid
 graph LR
-  subgraph VPC AWS VPC 10.0.0.0/16
+  subgraph VPC ["AWS VPC (10.0.0.0/16)"]
     direction LR
-    IGW[Internet Gateway]
-    subgraph PublicSubnet
-      EC2[Nginx Instance (ASG)]
+    IGW["🌐 Internet Gateway"]
+    subgraph PublicSubnet ["Public Subnet"]
+      EC2["📦 Nginx Instance (ASG)"]
     end
   end
 
-  User((User)) --> IGW
+  User((👤 User)) --> IGW
   IGW --> EC2
+
   classDef aws fill:#FF9900,stroke:#232F3E,color:white;
   class IGW,EC2 aws;
 ```
