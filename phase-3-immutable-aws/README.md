@@ -52,6 +52,33 @@ Client → Internet → EC2 (ASG) → Nginx
 
 **Intentionally Simple:** No ALB, no EIP, no configuration management tools.
 
+### Future Architecture Vision
+```mermaid
+graph LR
+    subgraph VPC [AWS VPC (10.0.0.0/16)]
+        direction TB
+        subgraph Public [Public Subnet]
+            ALB[⚖️ Application Load Balancer]
+            NAT[NAT Gateway]
+        end
+        
+        subgraph Private [Private Subnet]
+            ASG[📦 Auto Scaling Group / ECS]
+            DB[(🗄️ RDS Database)]
+        end
+    end
+    
+    Internet((☁️ Internet)) --> ALB
+    ALB --> ASG
+    ASG --> DB
+    ASG --> NAT
+    
+    classDef aws fill:#FF9900,stroke:#232F3E,color:white;
+    class NAT,ALB,ASG,DB aws;
+```
+
+*This production-ready architecture will be implemented in Phase 4, building upon the immutable principles demonstrated here.*
+
 ---
 
 ## Why Immutable Infrastructure?

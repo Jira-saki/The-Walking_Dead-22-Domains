@@ -24,6 +24,33 @@ This project documents the complete incident lifecycle: **identification → rev
 | **Eradication Rate** | 100% | Complete removal of backdoors, Guardian scripts, and immutable bits |
 ---
 
+## Incident Response Workflow
+
+```mermaid
+graph TD
+    A[🚨 User Reports Slow Website] -->|Trigger| B(🔍 Investigation Phase)
+    B --> C{Is Malware Found?}
+    C -- Yes --> D[🦠 Identify: PHP Backdoor]
+    C -- No --> E[Monitor Metrics]
+    
+    D --> F[🛡️ Containment Phase]
+    F --> G[Disconnect Public Internet]
+    F --> H[Apply Network Policy: Deny All]
+    
+    H --> I[🧹 Eradication Phase]
+    I --> J[Kill Malicious Process]
+    I --> K[Remove Infected Files]
+    
+    K --> L[♻️ Recovery Phase]
+    L --> M[Restore Data from Backup]
+    M --> N[🚀 Deploy Immutable Infrastructure]
+    
+    style D fill:#f96,stroke:#333,stroke-width:2px
+    style N fill:#9f6,stroke:#333,stroke-width:2px
+```
+
+---
+
 ## The Threat: "Zombie" Persistence Mechanisms
 
 The malware employed **two advanced persistence techniques** that defeated standard removal:
