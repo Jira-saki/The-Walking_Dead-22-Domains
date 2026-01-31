@@ -218,9 +218,9 @@ To prevent a "re-animation" of the infection and protect against future outbreak
 
 ---
 
-## 🚀 Coming Soon: Phase 3 - Automated Cloud Deployment with Terraform
+## 🚀 [Phase 3 - Immutable Infrastructure on AWS (Terraform)](phase-3-immutable-aws/README.md)
 
-*Next evolution: Scaling the "Zombie" containment strategy to AWS cloud infrastructure using Infrastructure as Code (IaC) principles.*
+*Next evolution: Applying immutable infrastructure principles to AWS cloud deployment - replacing compromised instances instead of attempting repairs.*
 
 ---
 
