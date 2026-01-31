@@ -55,7 +55,7 @@ Client → Internet → EC2 (ASG) → Nginx
 ### Future Architecture Vision
 ```mermaid
 graph LR
-    subgraph VPC [AWS VPC (10.0.0.0/16)]
+    subgraph VPC ["AWS VPC (10.0.0.0/16)"]
         direction TB
         subgraph Public [Public Subnet]
             ALB[⚖️ Application Load Balancer]
